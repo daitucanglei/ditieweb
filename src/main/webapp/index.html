@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+        .el-aside {
+            color: #333;
+        }
+        .el-table .warning-row {
+            background: oldlace;
+        }
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+
+</head>
+<body>
+<button onclick="location.href='http://localhost:8080/ditie/s.pdf'">点我</button>
+<div id="app">
+    </el-row>
+    <el-container style="height: 500px; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1', '3']">
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                    <el-menu-item-group>
+                        <template slot="title">分组一</template>
+                        <el-menu-item index="1-1">路线查询</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-menu"></i>导航二</template>
+                    <el-menu-item-group>
+                        <template slot="title">分组一</template>
+                        <el-menu-item index="2-1" @click="dialogVisibless = true">最短路径</el-menu-item>
+                        <el-menu-item index="2-1" @click="dialogVisible = true">最少换乘</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+        <el-container>
+            <el-header style="text-align: right; font-size: 12px">
+                <el-dropdown>
+                    <i class="el-icon-setting" style="margin-right: 15px"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>查看</el-dropdown-item>
+                        <el-dropdown-item>新增</el-dropdown-item>
+                        <el-dropdown-item>删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span>地铁</span>
+            </el-header>
+
+            <el-main>
+                <el-form :inline="true" :model="ditie" class="demo-form-inline">
+                    <el-form-item label="地铁线路">
+                        <el-input v-model="ditie.xianlu" placeholder="地铁线路"></el-input>
+                    </el-form-item>
+
+                    <!-- <el-form-item label="地铁车次">
+                         <el-input v-model="ditie.cid" placeholder="地铁车次"></el-input>
+                     </el-form-item>-->
+                    <el-form-item label="地铁站点">
+                        <el-input v-model="ditie.zhandian" placeholder="地铁站点"></el-input>
+                    </el-form-item>
+                    <!--<el-form-item label="地铁换乘信息">
+                        <el-input v-model="ditie.cid" placeholder="地铁换乘信息"></el-input>
+                    </el-form-item>-->
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">查询</el-button>
+                    </el-form-item>
+
+                </el-form>
+                <!--按钮-->
+               <!-- <el-row>
+
+                    <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+                    <el-button type="primary" plain @click="dialogVisible = true">新增</el-button>
+                </el-row>-->
+                <!--添加数据对话框表单-->
+                <el-dialog
+                        title="编辑"
+                        :visible.sync="dialogVisible"
+                        width="30%"
+                >
+                    <input type="button" value="最少换乘" onclick="location.href='h.html'">
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange">
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+                        <el-table-column
+                                type="index"
+                                width="50">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="xianlu"
+                                label="地铁线路"
+                                align="center"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="cid"
+                                label="地铁车次"
+                                align="center"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="zhandian"
+                                label="地铁站点"
+                                align="center"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="huanc"
+                                label="地铁车换乘"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </el-main>
+
+        </el-container>
+        <el-dialog
+                title="查询"
+                :visible.sync="dialogVisibless"
+                width="30%"
+        >
+            <input type="button" value="两站路线路线查询" onclick="location.href='hc.html'">
+            <input type="button" value="API" onclick="location.href='api.html'">
+
+            </el-form>
+        </el-dialog>
+    </el-container>
+</div>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+
+        mounted(){
+            //当页面加载完成后，发送异步请求，获取数据
+
+            this.selectAll();
+
+        },
+
+        methods: {
+
+            // 查询分页数据
+            selectAll(){
+                var _this=this;
+                axios({
+                    method:"post",
+                    /* url:"http://localhost:8080/ditie/ditie/all"*/
+                    url:"http://localhost:8080/ditie/ditie/selectByPageAndCondition?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
+                    data:this.ditie
+
+                }).then(resp=>
+                {
+                    /* _this.tableData=resp.data;*/
+                    this.tableData=resp.data.rows;
+                    this.totalCount=resp.data.totalCount;
+                })
+
+
+            },
+
+
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            // 复选框选中后执行的方法
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+            },
+            // 查询方法
+            onSubmit() {
+               /* var _this = this;
+
+                // 发送ajax请求，添加数据
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ditie/ditie/tiaocha1",
+                    data:_this.ditie
+                }).then(function (resp) {
+
+                    // 重新查询数据
+                    /!*  _this.selectAll();*!/
+                    _this.tableData=resp.data;
+
+
+                })*/
+                this.selectAll();
+            },
+            // 添加数据
+            addxin() {
+                var _this = this;
+
+                // 发送ajax请求，添加数据
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/xinwen/xiewen/add",
+                    data:_this.xin
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+
+                        //关闭窗口
+                        _this.dialogVisible = false;
+
+                        // 重新查询数据
+                        _this.selectAll();
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，添加成功',
+                            type: 'success'
+                        });
+
+                    }
+                })
+
+            },
+
+            //分页
+            handleSizeChange(val) {
+                this.pageSize=val;
+                this.selectAll();
+
+            },
+            handleCurrentChange(val) {
+                this.currentPage=val;
+                this.selectAll();
+            },
+            // 删除
+            deleteById(index, row){
+
+                // 弹出确认提示框
+
+                this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //用户点击确认按钮
+
+                    //2. 发送AJAX请求
+                    var _this = this;
+
+                    // 发送ajax请求，添加数据
+                    axios({
+                        method:"post",
+                        url:"http://localhost:8080/xinwen/xiewen/deleteById",
+                        data:row.xinwen
+                    }).then(function (resp) {
+                        if(resp.data == "success"){
+                            //删除成功
+
+                            // 重新查询数据
+                            _this.selectAll();
+                            // 弹出消息提示
+                            _this.$message({
+                                message: '恭喜你，删除成功',
+                                type: 'success'
+                            });
+
+                        }
+                    })
+                }).catch(() => {
+                    //用户点击取消按钮
+
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            updateById(index, row) {
+                this.xin.xinwen=row.xinwen;
+                this.xin.lanmu=row.lanmu;
+                this.centerVisible = true;
+
+            },
+            //修改数据的部分内容
+            edit() {
+                var _this = this;
+                //发送ajax异步请求，添加数据
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/xinwen/xiewen/updateById",
+                    data: _this.xin
+                }).then(function (resp) {
+                    if (resp.data == "success") {
+                        //关闭窗口
+                        _this.centerVisible = false;
+                        //查询一次
+                        _this.selectAll();
+                        _this.$message({
+                            message: '恭喜你，修改数据成功',
+                            type: 'success'
+                        });
+                    } else {
+                        _this.$message.error('修改数据失败');
+                    }
+                })
+            },
+            // 批量删除
+            deleteByIds(){}
+        },
+        data() {
+            return {
+                // 每页显示的条数
+                pageSize:5,
+                // 总记录数
+                totalCount:100,
+                // 当前页码
+                currentPage: 1,
+                // 添加数据对话框是否展示的标记
+                dialogVisible: false,
+                centerVisible:false,
+                dialogVisibless:false,
+                // 品牌模型数据
+                ditied:{
+                    xianlu1:'',
+                    xianlu2:''
+                },
+                ditie: {
+                    xianlu: '',
+                    cid: '',
+                    zhandian: '',
+                    huanc: ''
+                },
+                // 被选中的id数组
+                selectedIds:[],
+                // 复选框选中数据集合
+                multipleSelection: [],
+                // 表格数据
+                tableData: [{
+                    xianlu: '',
+                    cid: '',
+                    zhandian: '',
+                    huanc: ''
+                }, {
+                    xianlu: '',
+                    cid:'',
+                    zhandian: '',
+                    huanc: ''
+                }]
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
